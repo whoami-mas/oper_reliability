@@ -1,0 +1,21 @@
+:root {
+	--color-bg-body: #eee;
+	
+	--color-text: #343a53;
+	--color-a: #4472c4;
+	
+	--color-td-border: #aaa;
+	--color-td-background: none;
+	--color-th-background: #efefef;
+	
+	--color-input-background: #ffd688;
+	
+	--color-text-button: #fff;
+	--color-bg-button: #787e97;
+	--color-bg-button-active: #9da7c2;
+
+/*Scrollbar color default*/
+	--scrollbar-thumb-color: #F1F1F1;  /*color scroll*/
+    --scrollbar-track-color: #C1C1C1; /*color thomb*/
+    --scrollbar-thumb-hover-color: #A1A1A1; /*color when hovering over the mouse*/
+}
