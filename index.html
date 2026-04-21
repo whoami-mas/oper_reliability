@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=utf-8">
+		<link rel="stylesheet" type="text/css" href="src/style.css"/>
+		<script type="text/javascript" src="src/lib.js"></script>
+		<script type="text/javascript" src="src/dll.js"></script>
+		
+		<link rel="stylesheet" type="text/css" href="src/style_operation_rel.css"/>		
+		<script type="text/javascript" src="src/dll_operation_rel.js"></script>
+	</head>
+	
+	<body>
+		<textarea id="exchange_field">
+
+		</textarea>
+
+		<!--Название компании Ответственное лицо Отчетный год Отчетный квартал-->
+
+		<div class="page">
+
+			<h1 class="center">Реестр технологических процессов,<br> реализуемых Организацией и поставщиками услуг, а также объектов информационной инфраструктуры и каналов передачи защищенной информации (список объектов критичной архитектуры)</h1>
+
+			<table class="report" id="reestrtp_table">
+				<thead>
+					<tr>
+						<th class="nametp">Наименование технологического процесса</th>
+						<th class="name">Ответственный сотрудник организации</th>
+						<th class="position">Субъект доступа (должность)</th>
+						<th class="seccanal">Наличие канала защищенной информации</th>
+						<th class="inprovider">Наличие внешнего поставщика</th>
+						<th class="objectit">Задействование объекта информационной структуры</th>					
+					</tr>
+				</thead>
+
+				<tbody data-bind="foreach: registry_technical_process">
+					<tr>
+						<td class="td-input">
+							<input type="text" class="field_input full-width" maxlength="255" data-bind="value: process_name">
+						</td>
+						<td class="td-input">
+							<select class="field_input full-width" data-bind="value: main_employee_name, options: $root.employees_name"></select>
+						</td>
+						<td class="td-input">
+							<input type="text" class="field_input full-width" maxlength="255" data-bind="value: subject_name">
+						</td>
+						<td class="center td-input">
+							<input type="checkbox" class="field_input" data-bind="checked: has_security_inform">
+						</td>
+						<td class="center td-input">
+							<input type="checkbox" class="field_input" data-bind="checked: has_foreign_provider">		
+						</td>
+						<td class="td-input" style="position:relative;">
+							<input type="text" class="field_input full-width" maxlength="255" data-bind="value: inform_structure"> 
+							<a href="#" class="del-button del-reestrtp-rec-action" data-bind="click: $parent.remove_technical_process.bind($parent)" title="Удалить строку">&#10006;</a>				
+						</td>
+					</tr>
+				</tbody>
+
+				<tfoot>
+					<tr class="rec-add-panel">
+						<td colspan="6" style="text-align:center;">
+							<button class="add-rec-button" id="add-reestrtp-rec-action" data-bind="click: add_technical_process">+ Добавить запись</button>
+						</td>
+					</tr>
+				</tfoot>
+			</table>
+			
+			<div class="depend-block">
+				<p class="center"><button class="depend-button" id="depend-action" onclick="identity_dependencies();">Определить зависимости</button></p>
+				
+				<div class="depend-block-in" data-bind="visible: display_block">				
+					<h1 class="center">Реестр договоров заключенных с поставщиками услуг (участниками технологический процессов)</h1>
+
+					<table class="report" id="reestrdog_table">
+						<thead>
+							<tr>
+								<th class="nametp">Наименование технологического процесса</th>
+								<th class="nameorg">Наименование организации (внешнего поставщика)</th>
+								<th class="numdog">№ договора</th>
+								<th class="datestart">Дата начала действия</th>
+								<th class="dateend">Дата окончания действия</th>
+								<th class="nameit">Наименование информационной системы (для поставщиков услуг в сфере ИТ)</th>
+							</tr>
+						</thead>
+						<tbody data-bind="foreach: registry_contracts">
+							<tr>
+								<td class="td-input">
+									<input type="text" class="field_input full-width" data-bind="value: process_name">	
+								</td>
+								<td class="td-input">
+									<input type="text" class="field_input full-width" data-bind="value: organization_provider_name">	
+								</td>
+								<td class="td-input">
+									<input type="text" class="field_input full-width" data-bind="value: document_number">
+								</td>
+								<td class="td-input">
+									<input type="text" class="full-width field_input datepicker" maxlength="10" data-bind="date: date_start">
+								</td>
+								<td class="td-input">
+									<input type="text" class="full-width field_input datepicker" maxlength="10" data-bind="date: date_end">
+								</td>
+								<td class="td-input">
+									<input type="text" class="field_input full-width" data-bind="value: inform_system_name">
+								</td>
+							</tr>
+						</tbody>
+					</table>
+
+					<h1 class="center">Карта взаимного влияния объектов критичной архитектуры</h1>
+
+					<table class="report" id="mapobject_table">
+						<thead>
+							<tr>
+								<th class="object1">Первый объект</th>
+								<th class="object2">Второй объект</th>
+								<th class="select">Влияние</th>
+							</tr>
+						</thead>
+						<tbody data-bind="foreach: map_influence">
+							<tr id="mapobject-rec-0">
+								<td class="td-input">
+									<input type="text" class="field_input full-width" data-bind="value: first_subject_name">
+								</td>
+								<td class="td-input">
+									<input type="text" class="field_input full-width" data-bind="value: second_subject_name">
+								</td>
+								<td class="td-input">
+									<select id="ProfileField_mapobject_0_select" class="field_input full-width" data-bind="value: influence">
+										<option value="0"></option>
+										<option value="1">↔️ - Первый влияет на Второй</option>
+										<option value="2">🚫 - Первый не влияет на Второй</option>
+										<option value="3">❔ - Влияние невозможно определить</option>
+									</select>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+
+					<ul class="map-legend">
+						<li>↔️ - Объект A влияет на Объект B. Неработоспособность/деградация A ведет к неработоспособности/деградации B.</li>
+						<li>🚫 - Объект A не влияет на Объект B.</li>
+						<li>❔ - Влияние Объекта A на Объект B невозможно определить и документировать.</li>
+					</ul>
+			
+				</div>
+			</div> <!-- depend-block -->
+			
+			<h1 class="center">Лимиты базовых показателей</h1>
+			
+			<table class="report" id="limitbase_table">
+				<thead>
+					<tr>
+						<th class="key_ind">Ключевой индикатор</th>
+						<th class="limit_kv center">Лимит на квартал</th>
+						<th class="value_kv center">Значения за квартал</th>
+					</tr>
+				</thead>
+				<tbody data-bind="foreach: limits_base">
+					<tr>
+						<td data-bind="text: display_indicator"></td>
+						<td class="td-input">
+							<input type="text" class="field_input" data-bind="value: limit">
+						</td>
+						<td class="td-input">
+							<input type="text" class="field_input" data-bind="value: value">
+						</td>
+					</tr>
+					<!--<tr>
+						<td>П2 - деградации технологических процессов</td>
+						<td class="td-input">
+							<input type="text" class="field_input" data-bind="value: p2.limit">						
+						</td>
+						<td class="td-input">
+							<input type="text" class="field_input" data-bind="value: p2.value">
+						</td>
+					</tr>-->
+				</tbody>
+			</table>
+			
+			<p class="center">Организация устанавливает целевые показатели операционной надежности?</p>
+			<p class="center">
+				<span class="oper_nad">
+					<input type="hidden" id="ProfileField_opernad">
+					<input type="radio" name="opernad" id="opernad_yes" value="true" data-bind="checked: has_reliability_target, checkedValue: true"> <label for="opernad_yes">Да</label> 
+					<input type="radio" name="opernad" id="opernad_no" value="false" data-bind="checked: has_reliability_target, checkedValue: false"> <label for="opernad_no">Нет</label>
+				</span>
+			</p>
+			
+			<table class="report" id="ffff_table">
+				<thead>
+					<tr>
+						<th class="nametp">Наименование технологического процесса</th>
+						<th class="f1 center">Ф1</th>
+						<th class="f2 center">Ф2</th>
+						<th class="f3 center">Ф3</th>
+						<th class="f4 center">Ф4</th>
+						<th class="prim">Примечание</th>
+					</tr>
+				</thead>
+				<tbody data-bind="foreach: processes">
+					<tr>
+						<td class="td-input">
+							<input type="text" class="field_input" data-bind="value: process_name">
+						</td>
+						<td class="td-input">
+							<input type="text" class="field_input" data-bind="value: f1">
+						</td>
+						<td class="td-input">
+							<input type="text" class="field_input" data-bind="value: f2">
+						</td>
+						<td class="td-input">
+							<input type="text" class="field_input" data-bind="value: f3">
+						</td>
+						<td class="td-input">
+							<input type="text" class="field_input" data-bind="value: f4">
+						</td>
+						<td class="td-input">
+							<input type="text" class="field_input" data-bind="value: note">
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			
+		</div>
+		
+		<div class="container_btn">
+			<button class="save_btn" type="button" onclick="save_data();">Сохранить</button>
+		</div>
+	</body>
+</html>
